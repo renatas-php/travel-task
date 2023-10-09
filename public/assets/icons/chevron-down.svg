@@ -1,0 +1,6 @@
+<svg id="chevron-down" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+  <rect id="Rectangle" width="30" height="30" fill="none"/>
+  <g id="chevron_down" data-name="chevron down" transform="translate(9 12)">
+    <path id="Path" d="M0,0,6,6l6-6" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"/>
+  </g>
+</svg>

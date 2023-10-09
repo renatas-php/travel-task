@@ -1,0 +1,23 @@
+/* Flatpicker */
+.flatpickr-calendar {
+    border: 2px solid #000;
+    box-shadow: none;
+}
+.flatpickr-day {
+    font-weight: 700;
+}
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+    background-color: #000;
+    border-color: #000;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    font-weight: 700;
+}
+.flatpickr-current-month input.cur-year {
+    font-weight: 700;
+}
+span.flatpickr-weekday {
+    font-weight: 700;
+    color: #000;
+}
