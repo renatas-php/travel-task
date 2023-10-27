@@ -14,6 +14,7 @@ class TravelHelper {
         if($destinations['status'] == 'success')
         {   
             $destinationsData = collect($destinations['data']);
+            //dd($destinationsData);
             return $destinationsData;
         }
         return [];

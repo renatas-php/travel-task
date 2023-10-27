@@ -14,12 +14,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('front.index');
-});
-Route::get('/livewire', function () {
     return view('front.index-livewire');
+});
+Route::get('/classic', function () {
+    return view('front.index');
 });
 
 Route::get('search', [\App\Http\Controllers\Travels\SearchController::class, 'index']);
 
 Route::get('getCities/{id}', [\App\Http\Controllers\Travels\SearchController::class, 'getCities']);
+
+
