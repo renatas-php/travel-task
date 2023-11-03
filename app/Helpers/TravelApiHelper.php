@@ -8,8 +8,8 @@ use Illuminate\Support\Collection;
 class TravelApiHelper {    
 
     public static function getCheapTravels(
-        string $dateFrom, 
-        string $dateTo, 
+        string|null $dateFrom, 
+        string|null $dateTo, 
         int|null|string $cityId = null, 
         int|null $countryId, 
         int|null|string $hotelId = null, 

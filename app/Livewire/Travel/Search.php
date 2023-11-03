@@ -35,9 +35,9 @@ class Search extends Component
     public $page = 1;
 
     protected $rules = [
-        'countryId' => 'required|numeric',
-        'dateFrom' => 'required|string',
-        'dateTo' => 'required|string',
+        //'countryId' => 'required|numeric',
+        //'dateFrom' => 'required|string',
+        //'dateTo' => 'required|string',
         'durationFrom' => 'required|numeric|min:6|max:14',
         'durationTo' => 'required|numeric|min:6|max:14'
     ];
@@ -73,22 +73,6 @@ class Search extends Component
         }
 
         $results = \App\Helpers\TravelApiHelper::getCheapTravels($this->dateFrom, $this->dateTo, $this->cityId, $this->countryId, $this->hotelId, $this->hotelRating, $this->durationFrom, $this->durationTo, $this->maxResults);
-        //dd($this->countryId);
-
-        /*if(!$this->cityId)
-        {   
-            $this->cities = \App\Helpers\TravelHelper::getCitiesByCountry($this->dateFrom, $this->dateTo, $this->cityId, $this->countryId, $this->hotelRating, $this->durationFrom, $this->durationTo, $this->maxResults);
-        }    
-
-        if(!$this->hotelId)
-        {   
-            $this->hotels = \App\Helpers\TravelHelper::getHotelsByCountry($this->dateFrom, $this->dateTo, $this->cityId, $this->countryId, $this->hotelRating, $this->durationFrom, $this->durationTo, $this->maxResults);
-        }    */
-
-        //dd($this->hotels);
-
-        //$this->showCitySelection = true;
-        //$this->showHotelSelection = true;
         
         $this->paginationPages = ceil(count($results) / $this->paginationNumber);
         $this->results = $results;
