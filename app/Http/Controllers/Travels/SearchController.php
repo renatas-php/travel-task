@@ -65,23 +65,8 @@ class SearchController extends Controller
     }
 
     public function hotels()
-    {
-        $hotelLists = [
-            'teztour' => ['name' => 'teztour', 'url' => 'https://waavo.com/content/hotels_teztour.csv'],
-            'coral' => ['name' => 'coral', 'url' => 'https://waavo.com/content/hotels_coral.csv']
-        ];
-
-        foreach($hotelLists as $list)
-        {   
-            //set_time_limit(0);
-
-            $file = \App\Services\DownloadList::getCSVListFromUrl($list['url'], $list['name']); 
-            $files = Storage::files('public/csv/');    
-            //dd(Storage::get('public/csv/' . 'meruemail' . '.xlsx'));
-            //dd(Storage::get('public/csv/' . $list['name'] . '.csv'));    
-            //Excel::import(new \App\Imports\HotelsImport, Storage::get('public/csv/' . $list['name'] . '.csv'));
-
-        }
+    {   
+        
     }
 
     public function importfaking(Request $request)

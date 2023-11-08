@@ -12,36 +12,41 @@ class DownloadList {
         set_time_limit(0);
         $contents = file_get_contents($url);
         $contentsToArray = explode("\n", $contents);
-        /*foreach(Hotel::all() as $hot)
-        {
-            $hot->delete();
-        }*/
+
         foreach($contentsToArray as $row) {
             $splitRow = explode(',', $row);
-            $existHotel = Hotel::where('id', $splitRow[0])->first();
-            if($existHotel) 
+            $existHotelById = Hotel::select('hotel_id')->where('hotel_id', $splitRow[0])->first();
+            if(isset($splitRow[1]))
             {
-                $existHotel->update(
-                    [
-                        'hotel_name' => $splitRow[1], 
-                        'list_updated' => $splitRow[2]
-                    ]
-                );
+                $existHotelByName = Hotel::select('hotel_name')->where('hotel_name', \App\Helpers\StringHelper::fixHotelName($splitRow[1]))->first();
             }
-            else 
-            {   
-                if(isset($splitRow[0]) && isset($splitRow[1]))
+            
+            if(!$existHotelByName)
+            {
+                if($existHotelById) 
                 {
-                    Hotel::create(
-                        [   
-                            'hotel_id' => $splitRow[0],
-                            'hotel_name' => $splitRow[1], 
-                            'list_updated' => isset($splitRow[2]) ? $splitRow[2] : null 
+                    $existHotelById->update(
+                        [
+                            'hotel_name' => \App\Helpers\StringHelper::fixHotelName($splitRow[1]), 
+                            'list_updated' => $splitRow[2]
                         ]
                     );
                 }
-            }
-           
+                else 
+                {   
+                    if(isset($splitRow[0]) && isset($splitRow[1]) && \App\Helpers\HotelsListHelper::skipDuplicates(\App\Helpers\StringHelper::fixHotelName($splitRow[1])) == false)
+                    {
+                        Hotel::create(
+                            [   
+                                'hotel_id' => $splitRow[0],
+                                'hotel_name' => \App\Helpers\StringHelper::fixHotelName($splitRow[1]), 
+                                'list_updated' => isset($splitRow[2]) ? $splitRow[2] : null 
+                            ]
+                        );
+                    }
+                }     
+            }     
+            
         }
     }
 

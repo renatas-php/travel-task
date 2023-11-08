@@ -12,33 +12,68 @@ class TravelApiHelper {
         string|null $dateTo, 
         int|null|string $cityId = null, 
         int|null $countryId, 
-        int|null|string $hotelId = null, 
+        int|null|string|array $hotelIds = null, 
         int|string|null $hotelRating, 
         int $durationFrom, 
         int $durationTo, 
         int|null $maxResults = 1000
         )
     {   
-        return Http::get('https://waavodemolt.waavo.com/api/v1/cheap_travels/?', [
-                            'dateFrom' => $dateFrom,
-                            'dateTo' => $dateTo,
-                            'cityId' => $cityId,
-                            'countryId' => $countryId, 
-                            'hotelId' => $hotelId,
-                            'departureAirport' => 'VNO',
-                            'adults' => '2',
-                            'children' => '0', 
-                            'hotelRating' => $hotelRating, 
-                            'durationFrom' => $durationFrom, 
-                            'durationTo' => $durationTo, 
-                            'groupBy' => 'hotel',
-                            'useGroupedChildrenAges' => 'false',
-                            'searchForMergedHotels' => 'false',
-                            'updatedFrom' => 'true',
-                            'limit' => $maxResults,
-                            'maxStops' => '0'
-                        ]
-                    )->collect();
+        set_time_limit(0);
+        
+        $collections = collect();
+
+        if($hotelIds)
+        {   
+            foreach($hotelIds as $hotelId)
+            {   
+                $collections = $collections->merge(Http::get('https://waavodemolt.waavo.com/api/v1/cheap_travels/?', [
+                        'dateFrom' => $dateFrom,
+                        'dateTo' => $dateTo,
+                        'cityId' => $cityId,
+                        'countryId' => $countryId, 
+                        'hotelId' => $hotelId,
+                        'departureAirport' => 'VNO',
+                        'adults' => '2',
+                        'children' => '0', 
+                        'hotelRating' => $hotelRating, 
+                        'durationFrom' => $durationFrom, 
+                        'durationTo' => $durationTo, 
+                        'groupBy' => 'hotel',
+                        'useGroupedChildrenAges' => 'false',
+                        'searchForMergedHotels' => 'false',
+                        'updatedFrom' => 'true',
+                        'limit' => $maxResults,
+                        'maxStops' => '0'
+                    ]
+                )->collect());
+            }
+        }
+        else 
+        {
+            $collections = $collections->merge(Http::get('https://waavodemolt.waavo.com/api/v1/cheap_travels/?', [
+                    'dateFrom' => $dateFrom,
+                    'dateTo' => $dateTo,
+                    'cityId' => $cityId,
+                    'countryId' => $countryId, 
+                    'hotelId' => $hotelIds,
+                    'departureAirport' => 'VNO',
+                    'adults' => '2',
+                    'children' => '0', 
+                    'hotelRating' => $hotelRating, 
+                    'durationFrom' => $durationFrom, 
+                    'durationTo' => $durationTo, 
+                    'groupBy' => 'hotel',
+                    'useGroupedChildrenAges' => 'false',
+                    'searchForMergedHotels' => 'false',
+                    'updatedFrom' => 'true',
+                    'limit' => $maxResults,
+                    'maxStops' => '0'
+                ]
+            )->collect());
+        }
+
+        return $collections->unique('link');
     }
 
     public static function getMealsInText(int $mealId)

@@ -18,6 +18,7 @@ class Search extends Component
     public $durationTo = 10;
     public $hotelRating;
     public $hotelId = null;
+    public $hotelIds = [];
     public $cityId = null;
     public $cities = [];
     public $hotel;
@@ -67,17 +68,10 @@ class Search extends Component
     {   
         $this->validate();
 
-        if($this->countryId != $this->countryId)
-        {
-            $this->cityId = null;
-        }
-
-        $results = \App\Helpers\TravelApiHelper::getCheapTravels($this->dateFrom, $this->dateTo, $this->cityId, $this->countryId, $this->hotelId, $this->hotelRating, $this->durationFrom, $this->durationTo, $this->maxResults);
+        $results = \App\Helpers\TravelApiHelper::getCheapTravels($this->dateFrom, $this->dateTo, $this->cityId, $this->countryId, $this->hotelIds, $this->hotelRating, $this->durationFrom, $this->durationTo, $this->maxResults);
         
-        $this->paginationPages = ceil(count($results) / $this->paginationNumber);
-        $this->results = $results;
-         
-        
+        //$this->paginationPages = ceil(count($results) / $this->paginationNumber);
+        $this->results = $results;        
         
     }
 
@@ -88,11 +82,28 @@ class Search extends Component
 
     public function updatedCountry()
     {   
-        $qcountry = $this->country;
-        $countries = \App\Helpers\TravelHelper::getDestinationsCountries();
-        $this->countries = $countries->filter(function ($item) use ($qcountry) {
-            return false !== stristr($item['title'], $qcountry);
-        });
+        if(empty($this->country))
+        {
+            $this->countryId = null;
+        }
+        else 
+        {
+            $qcountry = $this->country;
+            $countries = \App\Helpers\TravelHelper::getDestinationsCountries();
+            if(!empty($this->country))
+            {
+                $this->countries = $countries->filter(function ($item) use ($qcountry) {
+                    return false !== stristr($item['title'], $qcountry);
+                });
+            }
+        }
+    }
+
+    public function removeCountry()
+    {
+        $this->countryId = null;
+        $this->country = null;
+        $this->countries = \App\Helpers\TravelHelper::getDestinationsCountries();
     }
 
     public function selectCountry(string $name)
@@ -103,7 +114,14 @@ class Search extends Component
 
     public function updatedHotel()
     {   
-        $this->hotels = Hotel::where('hotel_name', 'like', '%' . $this->hotel . '%')->take(20)->get();
+        if(empty($this->hotel))
+        {
+            $this->hotelId = null;
+        }
+        else 
+        {
+            $this->hotels = Hotel::where('hotel_name', 'like', '%' . $this->hotel . '%')->take(20)->get();
+        }        
     }
 
     public function goToPage(int $page)
