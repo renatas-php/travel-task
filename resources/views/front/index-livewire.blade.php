@@ -11,12 +11,10 @@
     flatpickr("#dateFrom", {             
         locale: "lt",
         dateFormat: "Y-m-d",
-        inline: true,
     });
     flatpickr("#dateTo", {             
         locale: "lt",
         dateFormat: "Y-m-d",
-        inline: true,
     });
 </script>
 @endsection

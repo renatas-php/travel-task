@@ -3,9 +3,9 @@
         <div class="w-full flex justify-between gap-[32px] relative" x-data="{ clickedCountry: false, clickedHotel: false, country: '', hotel: '' }"> 
             <div class="w-full mx-auto relative" @click="clickedCountry = true">
                 <label class="px-4 block mb-2 font-medium">Kryptis</label>
-                <div class="border-2 border-[#000] rounded-xl w-full h-14 relative" @click.away="clickedCountry = false">
+                <div class="border-2 border-[#000] rounded-xl w-full h-14 relative" @click.away="clickedCountry = false" wire:ignore>
                     <input type="text" wire:model.live="country" x-model="country" value="{{ $country }}" placeholder="Įveskite kryptį" class="font-medium w-full h-full bg-transparent px-4 focus:input-focus-shadow rounded-xl focus:outline-none transition-all">
-                    <button x-show="country != ''" @click="country = ''; clickedCountry = false" wire:click="removeCountry" type="button" class="bg-[#000] rounded-full flex items-center justify-center absolute w-[30px] h-[30px] text-[#fff] right-[16px] top-2/4 -translate-y-2/4 hover:rotate-90 transition-all"><img src="/assets/icons/close.svg"></button>
+                    <button x-show="country != false" @click="country = ''; clickedCountry = false" wire:click="removeCountry" type="button" class="bg-[#000] rounded-full flex items-center justify-center absolute w-[30px] h-[30px] text-[#fff] right-[16px] top-2/4 -translate-y-2/4 hover:rotate-90 transition-all"><img src="/assets/icons/close.svg"></button>
                 </div>    
                 @error('countryId')
                     <span class="invalid-feedback mt-[8px]" role="alert">
@@ -15,9 +15,8 @@
                 @if($countries)
                 <div class="absolute top-[100px] z-10 border-2 border-[#000] w-full rounded-xl bg-[#fff] max-h-[500px] overflow-y-scroll" x-show="clickedCountry == true">
                     <ul class="py-[16px] px-[16px]">
-                        <li><p class="font-medium mb-[16px]" wire:loading wire:target="country">Ieškoma</p></li>
                         @forelse($countries as $entity)
-                        <li class="relative pb-[8px] last:pb-[0px]" wire:ignore.self>
+                        <li class="relative pb-[8px] last:pb-[0px]">
                             <p class="font-medium">{{ $entity['title'] }}</p>
                             <input type="radio" @click="country = '{{ $entity['title'] }}'" wire:key="{{ $entity['id'] }}" wire:model="countryId" name="countryId" value="{{ $entity['id'] }}" class="w-full h-full absolute top-0 left-0 opacity-0 cursor-pointer" >
                         </li>
@@ -34,7 +33,7 @@
                 </div>
                 @if($hotels)
                 <div class="absolute top-[100px] z-10 border-2 border-[#000] w-full rounded-xl bg-[#fff] max-h-[500px] overflow-y-scroll" x-show="clickedHotel" @click.away="clickedHotel = false">
-                    <ul class="py-[16px] px-[16px]" wire:loading.remove wire:target="hotel">
+                    <ul class="py-[16px] px-[16px]">
                         @forelse($hotelIds as $hotelId)
                         <li class="relative pb-[8px] flex">
                             <input type="checkbox" wire:key="{{ $hotelId }}" wire:model.live="hotelIds" name="hotelIds" value="{{ $hotelId }}" class="cursor-pointer mr-[20px]">
@@ -42,7 +41,6 @@
                         </li>
                         @empty 
                         @endforelse
-                        <li><p class="font-medium mb-[16px]" wire:laoding wire:target="hotel">Ieškoma</p></li>
                         @forelse($hotels as $entity)
                             @if(!in_array($entity['hotel_id'], $hotelIds))
                             <li class="relative pb-[8px] flex" wire:ignore.self>
@@ -90,6 +88,7 @@
                 'inputName' => 'dateFrom',
                 'value' => old('dateFrom', $dateFrom),
                 'feedback' => true,
+                'placeholder' => 'Pasirinkite datą nuo'
             ])
             @include('front.includes.elements.livewire.date_input', 
             [
@@ -97,6 +96,7 @@
                 'inputName' => 'dateTo',
                 'value' => old('dateTo', $dateTo),
                 'feedback' => true,
+                'placeholder' => 'Pasirinkite datą iki'
             ])
         </div>
         <div class="w-full flex flex-col md:flex-row justify-between gap-[32px]">
@@ -123,28 +123,30 @@
                 'feedback' => true
             ])
         </div>
-        @include('front.includes.elements.livewire.select_array', 
-        [
-            'label' => 'Viešbučio reitingas', 
-            'value' => old('hotelRating'), 
-            'name' => 'Viešbučio reitingas', 
-            'inputName' => 'hotelRating', 
-            'items' => [1,2,3,4,5], 
-            'feedback' => true, 
-            'class' => 
-            'w-full'
-        ])
-        @include('front.includes.elements.livewire.input', 
-        [
-            'inputName' => 'maxResults', 
-            'value' => old('maxResults'), 
-            'label' => 'Rezultatų skaičius', 
-            'placeholder' => 'Įveskite rezultatų skaičių', 
-            'type' => 'number',
-            'min' => 100,
-            'max' => 1000,
-            'feedback' => false
-        ])
+        <div class="w-full flex flex-col md:flex-row justify-between gap-[32px]">
+            @include('front.includes.elements.livewire.select_array', 
+            [
+                'label' => 'Viešbučio reitingas', 
+                'value' => old('hotelRating'), 
+                'name' => 'Viešbučio reitingas', 
+                'inputName' => 'hotelRating', 
+                'items' => [1,2,3,4,5], 
+                'feedback' => true, 
+                'class' => 
+                'w-full'
+            ])
+            @include('front.includes.elements.livewire.input', 
+            [
+                'inputName' => 'maxResults', 
+                'value' => old('maxResults'), 
+                'label' => 'Rezultatų skaičius', 
+                'placeholder' => 'Įveskite rezultatų skaičių', 
+                'type' => 'number',
+                'min' => 100,
+                'max' => 1000,
+                'feedback' => false
+            ])
+        </div>
         <button type="button" wire:click="updateSearch" class="rounded-button bg-[#000] text-[#fff] text-[16px] font-medium px-[70px] py-[14px]">
             <span class="block" wire:loading.class="hidden" wire:target="updateSearch">Ieškoti</span>
             <div wire:loading wire:target="updateSearch">
@@ -153,7 +155,7 @@
         </button>
     </form>
     @if($results)
-    <div class="grid flex-1 grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[32px] mt-[32px] px-container-mobile md:px-container" wire:loading.class="hidden" wire:target="goToPage" id="results">
+    <div class="grid flex-1 grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[32px] mt-[32px] px-container-mobile md:px-container mb-[32px]" wire:loading.class="hidden" wire:target="goToPage" id="results">
         @forelse($results as $item)
         <a href="{{ $item['link'] }}" target="_blank" class="border-2 border-[#000] rounded-xl relative">
             <img src="{{ $item['image'] }}" class="rounded-tl-xl rounded-tr-xl" loading="lazy" width="500" height="400">
@@ -192,8 +194,8 @@
         <button class="rounded-full h-[40px] w-[40px] border-2 border-[#000] @if($page == $i) bg-[#000] text-[#fff] @endif" type="button" wire:click="goToPage('{{ $i }}')">{{ $i }}</button>
         @endfor
     </div>--}}
-    {{--@elseif(empty($results) && $countryId)
-        <div class="text-[30px] font-semibold">Pasiūlymų nerasta</div>--}}
+    @elseif(!empty($countryId) || !empty($hotelIds) && !empty($results) )
+        <div class="text-[30px] font-semibold">Pasiūlymų nerasta</div>
     @endif
     <script>
         window.addEventListener('scrollToResults', event => {

@@ -20,7 +20,7 @@ class Search extends Component
     public $hotelId = null;
     public $hotelIds = [];
     public $cityId = null;
-    public $cities = [];
+    //public $cities = [];
     public $hotel;
     public $hotels = [];
     public $search;
@@ -30,10 +30,9 @@ class Search extends Component
     public $showCitySelection = false;
     public $showHotelSelection = false;
     public $country;
-    public $shit;
-    public $paginationNumber = 40;
-    public $paginationPages;
-    public $page = 1;
+    //public $paginationNumber = 40;
+    //public $paginationPages;
+    //public $page = 1;
 
     protected $rules = [
         //'countryId' => 'required|numeric',
@@ -90,11 +89,12 @@ class Search extends Component
         {
             $qcountry = $this->country;
             $countries = \App\Helpers\TravelHelper::getDestinationsCountries();
+
             if(!empty($this->country))
             {
-                $this->countries = $countries->filter(function ($item) use ($qcountry) {
+                $this->countries = $countries->where('title', 'like', $qcountry);/*$countries->filter(function ($item) use ($qcountry) {
                     return false !== stristr($item['title'], $qcountry);
-                });
+                });*/
             }
         }
     }
@@ -124,11 +124,11 @@ class Search extends Component
         }        
     }
 
-    public function goToPage(int $page)
+    /*public function goToPage(int $page)
     {   
         $this->dispatch('scrollToResults');
         $this->page = $page;
         $this->results = $this->results->skip($page * $this->paginationNumber);
-    }
+    }*/
 }
 
