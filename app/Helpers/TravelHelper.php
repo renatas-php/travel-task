@@ -14,8 +14,36 @@ class TravelHelper {
         if($destinations['status'] == 'success')
         {   
             $destinationsData = collect($destinations['data']);
-            //dd($destinationsData);
-            return $destinationsData;
+            
+            $destinations = collect($destinationsData)->map(function($full_name) {
+                return [
+                    'title' => $full_name['full_name']['title'], 
+                    'id' => $full_name['country']['id'], 
+                    'country' => explode(', ', $full_name['full_name']['title'])[1], 
+                    'country_id' => $full_name['country']['id'],
+                    'city' => explode(', ', $full_name['full_name']['title'])[0],
+                    'city_id' => $full_name['id']
+                ];//$full_name;
+            });
+
+            $new_destinations = collect($destinationsData)->map(function($full_name) use ($destinations) {
+                return [
+                    'title' => $full_name['full_name']['title'], 
+                    'id' => $full_name['country']['id'], 
+                    'country' => explode(', ', $full_name['full_name']['title'])[1], 
+                    'country_id' => $full_name['country']['id'],
+                    'city' => explode(', ', $full_name['full_name']['title'])[0],
+                    'city_id' => $full_name['id'],
+                    'cities' => collect($destinations->where('country_id', $full_name['country']['id']))->map(function($item) {
+                        return [
+                            'id' => $item['city_id'],
+                            'city' => $item['city'],
+                        ];
+
+                    })->toArray()
+                ];
+            });
+            return $new_destinations->unique('country_id');            
         }
         return [];
     }
@@ -87,6 +115,26 @@ class TravelHelper {
             ];
         });
         return $results;
+    }
+
+    public static function getCities()
+    {
+        $destinations = Http::get('https://waavodemolt.waavo.com/api/v1/travels/destinations');
+        $destinations = $destinations->collect();
+        if($destinations['status'] == 'success')
+        {   
+            $destinationsData = collect($destinations['data']);
+            $destinations = collect($destinationsData)->map(function($full_name){
+                return [
+                    'country' => explode(', ', $full_name['full_name']['title'])[1], 
+                    'country_id' => $full_name['country']['id'],
+                    'city' => explode(', ', $full_name['full_name']['title'])[0],
+                    'city_id' => $full_name['id']
+                ];
+            });
+            return $destinations;            
+        }
+        return [];
     }
     
     

@@ -27,7 +27,7 @@ class TravelApiHelper {
         {   
             foreach($hotelIds as $hotelId)
             {   
-                $collections = $collections->merge(Http::get('https://waavodemolt.waavo.com/api/v1/cheap_travels/?', [
+                $collections = $collections->merge(Http::get('https://pasirinksparnus.waavo.com/api/v1/cheap_travels/?', [
                         'dateFrom' => $dateFrom,
                         'dateTo' => $dateTo,
                         'cityId' => $cityId,
@@ -51,7 +51,7 @@ class TravelApiHelper {
         }
         else 
         {
-            $collections = $collections->merge(Http::get('https://waavodemolt.waavo.com/api/v1/cheap_travels/?', [
+            $collections = $collections->merge(Http::get('https://pasirinksparnus.waavo.com/api/v1/cheap_travels/?', [
                     'dateFrom' => $dateFrom,
                     'dateTo' => $dateTo,
                     'cityId' => $cityId,
@@ -73,12 +73,12 @@ class TravelApiHelper {
             )->collect());
         }
 
-        return $collections->unique('link');
+        return $collections->unique('link')->sortBy('price_before_per_person');
     }
 
     public static function getMealsInText(int $mealId)
     {
-        $mealsTypes = Http::get('https://waavodemolt.waavo.com/api/v1/hotel/pansions/groups')->collect();
+        $mealsTypes = Http::get('https://pasirinksparnus.waavo.com/api/v1/hotel/pansions/groups')->collect();
         if($mealsTypes)
         {
             $equivalent = $mealsTypes->where('id', $mealId)->first();

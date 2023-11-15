@@ -13,7 +13,7 @@
             </span>
         @enderror
     @endif
-    <div class="absolute flex flex-col gap-16px border-2 border-[#000] rounded-xl w-full p-16px mt-16px bg-[#fff] z-10 max-h-[200px] overflow-y-scroll" x-show="open" x-cloak>                        
+    <div class="absolute flex flex-col gap-16px border-2 border-[#000] rounded-xl w-full p-16px mt-16px bg-[#fff] z-10 max-h-[200px] overflow-y-scroll {{ $dropdownClass ?? '' }}" x-show="open" x-cloak>                        
         <div class="cursor-pointer relative" @click="orderingText = '{{ $label ?? '' }}'; open = false">
             <input type="radio" name="{{ $inputName ?? '' }}" value="{{ null }}" class="absolute h-full w-full opacity-0 cursor-pointer" @if(isset($value)) checked @endif>
             <p class="font-medium">{{ $label ?? '' }}</p>                        

@@ -10,7 +10,7 @@ use App\Models\Travel\Hotel;
 
 class Search extends Component
 {   
-    public $maxResults = 1000;
+    public $maxResults = 100;
     public $dateFrom;
     public $dateTo;
     public $countryId = null;
@@ -26,10 +26,12 @@ class Search extends Component
     public $search;
     public $test;
     public $countries = [];
+    public $cities = [];
     public $results = [];
     public $showCitySelection = false;
     public $showHotelSelection = false;
     public $country;
+    public $hotelExacts = [];
     //public $paginationNumber = 40;
     //public $paginationPages;
     //public $page = 1;
@@ -68,7 +70,6 @@ class Search extends Component
         $this->validate();
 
         $results = \App\Helpers\TravelApiHelper::getCheapTravels($this->dateFrom, $this->dateTo, $this->cityId, $this->countryId, $this->hotelIds, $this->hotelRating, $this->durationFrom, $this->durationTo, $this->maxResults);
-        
         //$this->paginationPages = ceil(count($results) / $this->paginationNumber);
         $this->results = $results;        
         
@@ -89,13 +90,18 @@ class Search extends Component
         {
             $qcountry = $this->country;
             $countries = \App\Helpers\TravelHelper::getDestinationsCountries();
+            $cities = \App\Helpers\TravelHelper::getCities();
 
             if(!empty($this->country))
             {
-                $this->countries = $countries->where('title', 'like', $qcountry);/*$countries->filter(function ($item) use ($qcountry) {
+                $this->countries = $countries->filter(function ($item) use ($qcountry) {
                     return false !== stristr($item['title'], $qcountry);
-                });*/
+                });
             }
+
+            $this->cities = $cities->filter(function ($item) use ($qcountry) {
+                return false !== stristr($item['city'], $qcountry);
+            });
         }
     }
 
@@ -104,6 +110,7 @@ class Search extends Component
         $this->countryId = null;
         $this->country = null;
         $this->countries = \App\Helpers\TravelHelper::getDestinationsCountries();
+        $this->cityId = null;
     }
 
     public function selectCountry(string $name)
@@ -120,7 +127,9 @@ class Search extends Component
         }
         else 
         {
-            $this->hotels = Hotel::where('hotel_name', 'like', '%' . $this->hotel . '%')->take(20)->get();
+            $this->hotels = Hotel::whereRaw("MATCH(hotel_name) AGAINST(? IN BOOLEAN MODE)", [$this->hotel])->take(40)->get();
+            //where('hotel_name', 'like', '%' . $this->hotel . '%')->take(40)->get();
+            $this->hotelExacts = Hotel::where('hotel_name', $this->hotel)->take(1)->get();
         }        
     }
 
@@ -130,5 +139,10 @@ class Search extends Component
         $this->page = $page;
         $this->results = $this->results->skip($page * $this->paginationNumber);
     }*/
+
+    public function checkHotel(int $id)
+    {   
+        array_push($this->hotelIds, $id);
+    }
 }
 

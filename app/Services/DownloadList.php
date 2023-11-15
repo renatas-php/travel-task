@@ -13,6 +13,9 @@ class DownloadList {
         $contents = file_get_contents($url);
         $contentsToArray = explode("\n", $contents);
 
+        //Hotel::query()->delete();
+        //return;
+
         foreach($contentsToArray as $row) {
             $splitRow = explode(',', $row);
             $existHotelById = Hotel::select('hotel_id')->where('hotel_id', $splitRow[0])->first();
