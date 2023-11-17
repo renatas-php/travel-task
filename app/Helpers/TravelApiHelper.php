@@ -76,7 +76,7 @@ class TravelApiHelper {
         return $collections->unique('link')->sortBy('price_before_per_person');
     }
 
-    public static function getMealsInText(int $mealId)
+    public static function getMealsInText(int|null $mealId)
     {
         $mealsTypes = Http::get('https://pasirinksparnus.waavo.com/api/v1/hotel/pansions/groups')->collect();
         if($mealsTypes)

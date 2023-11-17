@@ -50,7 +50,7 @@
                         <li class="relative pb-[8px] flex">
                             <input type="checkbox" wire:key="{{ $hotelId }}" wire:model.live="hotelIds" name="hotelIds" value="{{ $hotelId }}" class="cursor-pointer mr-[20px]">
                             <input type="checkbox" wire:key="{{ $hotelId }}" wire:model.live="hotelIds" name="hotelIds" value="{{ $hotelId }}" class="cursor-pointer mr-[20px] absolute w-full h-full opacity-0 top-0 left-0">
-                            <p class="font-medium">{!! str_replace($hotel, "<b>" . $hotel . "</b>", \App\Models\Travel\Hotel::select('hotel_id', 'hotel_name')->where('hotel_id', $hotelId)->value('hotel_name')) !!}</p>
+                            <p class="font-medium">{!! \App\Helpers\FrontHelper::makeBold($hotel, \App\Models\Travel\Hotel::select('hotel_id', 'hotel_name')->where('hotel_id', $hotelId)->value('hotel_name')) !!}</p>
                         </li>
                         @empty 
                         @endforelse
@@ -59,17 +59,29 @@
                                 <li class="relative pb-[8px] flex">
                                     <input type="checkbox" @click="hotel = '{{ $entity['hotel_name'] }}'" wire:key="{{ $entity['id'] }}" wire:model.live="hotelIds" name="hotelIds" value="{{ $entity['hotel_id'] }}" class="cursor-pointer mr-[20px]">
                                     <input type="checkbox" @click="hotel = '{{ $entity['hotel_name'] }}'" wire:key="{{ $entity['id'] }}" wire:model.live="hotelIds" name="hotelIds" value="{{ $entity['hotel_id'] }}" class="cursor-pointer mr-[20px] absolute w-full h-full opacity-0 top-0 left-0">
-                                    <p class="font-medium cursor-pointer">{!! str_replace($hotel, "<b>" . $hotel . "</b>", $entity['hotel_name']) !!}</p>
+                                    <p class="font-medium cursor-pointer">{!! \App\Helpers\FrontHelper::makeBold($hotel, $entity['hotel_name']) !!}</p>
                                 </li>
                             @endif
                         @empty 
                         @endforelse
+                        @if($hotels->count() < 1)
+                            @forelse($hotelsLike as $entity)
+                                @if(!in_array($entity['hotel_id'], $hotelIds) && $entity['hotel_name'] != $hotel)
+                                <li class="relative pb-[8px] flex">
+                                    <input type="checkbox" @click="hotel = '{{ $entity['hotel_name'] }}'" wire:key="{{ $entity['id'] }}" wire:model.live="hotelIds" name="hotelIds" value="{{ $entity['hotel_id'] }}" class="cursor-pointer mr-[20px]">
+                                    <input type="checkbox" @click="hotel = '{{ $entity['hotel_name'] }}'" wire:key="{{ $entity['id'] }}" wire:model.live="hotelIds" name="hotelIds" value="{{ $entity['hotel_id'] }}" class="cursor-pointer mr-[20px] absolute w-full h-full opacity-0 top-0 left-0">
+                                    <p class="font-medium cursor-pointer">{!! \App\Helpers\FrontHelper::makeBold($hotel, $entity['hotel_name']) !!}</p>
+                                </li>
+                                @endif
+                            @empty 
+                            @endforelse
+                        @endif
                         @forelse($hotels as $entity)
                             @if(!in_array($entity['hotel_id'], $hotelIds) && $entity['hotel_name'] != $hotel)
                             <li class="relative pb-[8px] flex">
                                 <input type="checkbox" @click="hotel = '{{ $entity['hotel_name'] }}'" wire:key="{{ $entity['id'] }}" wire:model.live="hotelIds" name="hotelIds" value="{{ $entity['hotel_id'] }}" class="cursor-pointer mr-[20px]">
                                 <input type="checkbox" @click="hotel = '{{ $entity['hotel_name'] }}'" wire:key="{{ $entity['id'] }}" wire:model.live="hotelIds" name="hotelIds" value="{{ $entity['hotel_id'] }}" class="cursor-pointer mr-[20px] absolute w-full h-full opacity-0 top-0 left-0">
-                                <p class="font-medium cursor-pointer">{!! str_replace($hotel, "<b>" . $hotel . "</b>", $entity['hotel_name']) !!}</p>
+                                <p class="font-medium cursor-pointer">{!! \App\Helpers\FrontHelper::makeBold($hotel, $entity['hotel_name']) !!}</p>
                             </li>
                             @endif
                         @empty 

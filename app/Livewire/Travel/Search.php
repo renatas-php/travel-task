@@ -32,6 +32,7 @@ class Search extends Component
     public $showHotelSelection = false;
     public $country;
     public $hotelExacts = [];
+    public $hotelsLike = [];
     //public $paginationNumber = 40;
     //public $paginationPages;
     //public $page = 1;
@@ -128,7 +129,7 @@ class Search extends Component
         else 
         {
             $this->hotels = Hotel::whereRaw("MATCH(hotel_name) AGAINST(? IN BOOLEAN MODE)", [$this->hotel])->take(40)->get();
-            //where('hotel_name', 'like', '%' . $this->hotel . '%')->take(40)->get();
+            $this->hotelsLike = Hotel::where('hotel_name', 'like', '%' . $this->hotel . '%')->take(40)->get();
             $this->hotelExacts = Hotel::where('hotel_name', $this->hotel)->take(1)->get();
         }        
     }
